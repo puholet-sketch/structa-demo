@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#1a1a1a" />
+  <meta name="color-scheme" content="dark" />
+  <title>Structa · оргструктура (демо Nordix)</title>
+  <meta name="description" content="Демо кадрового реестра с оргструктурой: дерево отделов, сотрудники, Excel/PDF. Синтетические данные вымышленной IT-группы Nordix." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body>
+  <div class="demo-banner" role="note">
+    <strong>Публичное демо</strong>
+    <span>Вымышленная группа компаний <em>Nordix</em> (Axiom FinTech · Нордикс Системс · Клаудкор). Структура и роли типичны для IT-вендора в страховании — без реальных ФИО и работодателей. Редактирование и Excel работают локально в браузере.</span>
+    <a class="demo-banner__link" href="https://puholet-sketch.github.io/oleg-sorvanov/#personal">← портфолио</a>
+  </div>
+
+  <div class="app">
+    <header class="hero-bar">
+      <div class="brand">
+        <span class="brand-gold">Struct</span><span class="brand-light">a</span>
+        <span class="brand-tagline">— оргструктура и кадровый реестр</span>
+      </div>
+      <a class="btn btn-ghost btn-sm" href="#about-demo">О демо</a>
+    </header>
+
+    <div class="toolbar">
+      <button id="exportPrettyXlsxBtn" class="btn btn-ghost btn-sm" type="button">Выгрузка Excel</button>
+      <button id="importXlsxBtn" class="btn btn-ghost btn-sm" type="button">Импорт Excel</button>
+      <button id="printPdfBtn" class="btn btn-ghost btn-sm" type="button">Печать PDF</button>
+      <input id="fileInput" type="file" accept=".xlsx,.xls" hidden />
+      <input id="pathFileInput" type="file" accept=".xlsx,.xls" hidden />
+      <input id="filePathDisplay" placeholder="Файл Excel (локально)" style="flex:1; min-width:200px;" readonly />
+      <button id="applyPathBtn" class="btn btn-ghost btn-sm" type="button">Задать файл</button>
+      <button id="resetDemoBtn" class="btn btn-primary btn-sm" type="button">Сбросить демо</button>
+      <div id="status" class="status">Инициализация...</div>
+    </div>
+
+    <div class="layout">
+      <section class="panel" id="treePanel">
+        <p class="eyebrow">Компания</p>
+        <h3>Структура</h3>
+        <div class="tree-toolbar">
+          <div class="tree-toolbar-actions">
+            <button id="addDeptBtn" class="btn btn-primary btn-sm" type="button">+ Отдел</button>
+            <button id="editDeptBtn" class="btn btn-ghost btn-sm" type="button">Изменить</button>
+            <button id="deleteDeptBtn" class="btn btn-danger btn-sm" type="button">Удалить</button>
+          </div>
+          <div class="tree-toolbar-line">
+            <div class="tree-toolbar-cell tree-toolbar-cell-start">
+              <label class="tree-check" for="selectAllPrint"><input type="checkbox" id="selectAllPrint" /><span>Выбрать все</span></label>
+            </div>
+            <div class="tree-toolbar-cell"></div>
+            <div class="tree-toolbar-cell">
+              <button id="toggleTreeBtn" class="btn btn-ghost btn-sm" type="button" aria-pressed="false">Раскрыть всё</button>
+            </div>
+          </div>
+          <div class="tree-toolbar-line">
+            <div class="tree-toolbar-cell tree-toolbar-cell-start">
+              <label class="tree-check" for="maternityFilterOnly"><input type="checkbox" id="maternityFilterOnly" /><span>Декретные</span></label>
+            </div>
+            <div class="tree-toolbar-cell tree-toolbar-cell-end">
+              <span class="tree-filter-caption">Отношения:</span>
+            </div>
+            <div class="tree-toolbar-cell">
+              <select id="employmentFilter" class="tree-filter-select">
+                <option value="">Все</option>
+                <option value="labor">Трудовой договор</option>
+                <option value="services">Оказание услуг</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <p class="muted" style="margin-bottom:6px;">☑ — в PDF. Фильтры: декретные / отношения.</p>
+        <div id="tree" class="tree"></div>
+      </section>
+
+      <section class="panel">
+        <p class="eyebrow">Команда</p>
+        <h3>Сотрудники</h3>
+        <div class="panel-actions">
+          <input id="employeeSearch" placeholder="Поиск..." style="flex:1;" />
+          <button id="addEmpBtn" class="btn btn-primary btn-sm" type="button">+ Сотрудник</button>
+        </div>
+        <div id="employeesList" class="list"></div>
+      </section>
+
+      <section class="panel" id="profilePanel">
+        <p class="eyebrow">Профиль</p>
+        <h3>Карточка</h3>
+        <div class="form-grid">
+          <div class="full"><label>ФИО</label><input id="fFio" /></div>
+          <div class="full"><label>Должность</label><input id="fRole" /></div>
+          <div>
+            <label>Уровень</label>
+            <select id="fLevel">
+              <option>Junior</option><option>Middle</option><option>Senior</option>
+              <option>Lead</option><option>Head</option>
+            </select>
+          </div>
+          <div><label>Телефон</label><input id="fPhone" /></div>
+          <div class="full"><label>Email</label><input id="fEmail" /></div>
+          <div>
+            <label>Форма трудовых отношений</label>
+            <select id="fEmploymentForm">
+              <option>Трудовой договор</option>
+              <option>ГПХ</option>
+              <option>договор</option>
+            </select>
+          </div>
+          <div>
+            <label>Тип лица</label>
+            <select id="fPersonType">
+              <option>ФЛ</option>
+              <option>Самозанятый</option>
+              <option>ИП</option>
+            </select>
+          </div>
+          <div class="full">
+            <label class="checkbox-field" for="fMaternityLeave"><input type="checkbox" id="fMaternityLeave" /><span>В декрете</span></label>
+          </div>
+          <div class="full"><label>Генеральный в компаниях</label><input id="fGeneralCompanies" readonly /></div>
+          <div class="full"><label>Числится также в организациях</label><input id="fAlsoInOrgs" readonly /></div>
+          <div class="full">
+            <label>Руководитель</label>
+            <select id="fManager"><option value="">— нет —</option></select>
+          </div>
+        </div>
+        <div class="panel-actions" style="margin-top:8px;">
+          <button id="saveEmpBtn" class="btn btn-primary btn-sm" type="button">Сохранить</button>
+          <button id="deleteEmpBtn" class="btn btn-danger btn-sm" type="button">Удалить</button>
+          <button id="moveEmpBtn" class="btn btn-ghost btn-sm" type="button">Перенести</button>
+        </div>
+      </section>
+    </div>
+
+    <section class="about-demo" id="about-demo">
+      <h2>Зачем это в портфолио</h2>
+      <p>Живой кейс PMO/HR-инструмента: единый реестр оргструктуры для группы компаний (вендор + fintech + infra), дерево отделов, карточки, фильтры, Excel и PDF. На проде такие данные конфиденциальны — здесь полная синтетика с той же «физикой» ролей: проектный офис, аналитика, разработка, QA, ТП, коммерция.</p>
+      <ul>
+        <li>~150 синтетических сотрудников · 3 юрлица · иерархия с менеджерами</li>
+        <li>Импорт/экспорт Excel, печать PDF, локальное сохранение в браузере</li>
+        <li>Кнопка «Сбросить демо» возвращает исходный seed</li>
+      </ul>
+    </section>
+  </div>
+
+  <div id="printRoot" class="print-root" hidden></div>
+
+  <script src="assets/js/seed-demo.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script>
+    document.getElementById("resetDemoBtn")?.addEventListener("click", () => {
+      localStorage.removeItem("structa.nordix.demo.v1");
+      location.reload();
+    });
+  </script>
+</body>
+</html>
